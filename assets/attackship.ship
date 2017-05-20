@@ -1,0 +1,9 @@
+{
+	"name":"attackship",
+	"max_rot_speed":30,
+	"rot_accel":50,
+	"max_speed":200,
+	"accel":50,
+	"image":"assets/attackship_s.png",
+	"image_scale":1
+}

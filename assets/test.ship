@@ -4,6 +4,6 @@
 	"rot_accel":50,
 	"max_speed":200,
 	"accel":50,
-	"image":"test.png",
+	"image":"assets/test.png",
 	"image_scale":0.5
 }

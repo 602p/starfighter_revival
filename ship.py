@@ -21,7 +21,7 @@ class ShipType(object):
 		#self.position = 
 
 class Ship(entity.Entity):
-	def __init__(self, ship_type):
+	def __init__(self, ship_type, ai):
 		entity.Entity.__init__(self)
 		self.base_image=ship_type.image.copy()
 		self.last_angle=None
@@ -30,6 +30,8 @@ class Ship(entity.Entity):
 		self.type=ship_type
 		self.turn_direction=0
 		self.accel_direction=0
+		self.ai=ai
+		self.ai.ship=self
 
 		self.angle=0
 		self.position=[200,200]
@@ -55,6 +57,8 @@ class Ship(entity.Entity):
 		self.accel_direction=-1
 
 	def update(self, screen, dt):
+		self.ai.update(dt)
+
 		if self.turn_direction:
 			self.rotation_speed+=self.turn_direction*self.type.rot_accel*dt
 		else:
@@ -98,7 +102,8 @@ class Ship(entity.Entity):
 			"eid":self.eid,
 			"type":self.type.name,
 			"acc_dir":self.accel_direction,
-			"tur_dir":self.turn_direction
+			"tur_dir":self.turn_direction,
+			"ai":type(self.ai).name
 		}
 
 	def load_data(self, data):
