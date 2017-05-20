@@ -1,4 +1,4 @@
-import pygame, math, game
+import pygame, math, game, entity
 
 def rot_center(image, rect, angle):
 	"""rotate an image while keeping its center"""
@@ -16,8 +16,9 @@ class ShipType(object):
 		self.image=game.get_image(data["image"])
 		self.image=pygame.transform.scale(self.image, [int(i*data.get("image_scale", 1)) for i in self.image.get_size()])
 
-class Ship(object):
+class Ship(entity.Entity):
 	def __init__(self, ship_type):
+		entity.Entity.__init__(self)
 		self.base_image=ship_type.image.copy()
 		self.last_angle=None
 		self.image=None
@@ -31,7 +32,6 @@ class Ship(object):
 		self.rotation_speed=0
 		self.speed=0
 
-		# print(dir(self))
 		self.make_rotated_image()
 
 	def make_rotated_image(self):

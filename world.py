@@ -15,7 +15,7 @@ class StarfieldLayer:
 
 	def render(self, surface, p):
 		i=0
-		self.random.seed(413)
+		self.random.seed(123)
 		while i!=self.density:
 			#
 			pos=(self.random.uniform(0, self.size[0]), self.random.uniform(0, self.size[1]))
