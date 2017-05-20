@@ -1,4 +1,4 @@
-import pygame, json, socket, threading, random
+import pygame, json, socket, threading, random, os, ai
 
 def get_image(path):
 	return pygame.image.load(path).convert_alpha()
@@ -7,7 +7,7 @@ def load_json(path):
 	with open(path, 'r') as fd:
 		return json.load(fd)
 
-options=load_json("global_options.json")
+options=load_json("assets/global_options.json")
 
 class GameClient:
 	def __init__(self, address):
@@ -26,15 +26,15 @@ class GameClient:
 		self.sock.sendto(json.dumps(data).encode("utf-8"), self.saddr)
 
 	def render(self, screen, dt):
-		for e in self.owned_entities.values():
+		for e in list(self.owned_entities.values()):
 			e.render(screen, dt)
-		for e in self.remote_entities.values():
+		for e in list(self.remote_entities.values()):
 			e.render(screen, dt)
 
 	def update(self, screen, dt):
-		for e in self.owned_entities.values():
+		for e in list(self.owned_entities.values()):
 			e.update(screen, dt)
-		for e in self.remote_entities.values():
+		for e in list(self.remote_entities.values()):
 			e.update(screen, dt)
 
 	def add_owned(self, e):
@@ -56,7 +56,7 @@ class GameClient:
 	def handlej(self, data):
 		if data["msg"]=="entity":
 			if data["eid"] not in self.remote_entities:
-				self.remote_entities[data["eid"]]=ship.Ship(ship.ShipType(load_json("test.ship")))
+				self.remote_entities[data["eid"]]=ship.Ship(ship_types[data["type"]], ai.ais[data["ai"]]())
 			self.remote_entities[data["eid"]].load_data(data)
 
 	def send_updates(self):
@@ -68,3 +68,10 @@ class GameClient:
 				self.sendj(data)
 
 import ship
+
+ship_types={}
+def load_ship_types():
+	for filename in os.listdir("assets"):
+		if filename.endswith(".ship"):
+			shty=ship.ShipType(load_json("assets/"+filename))
+			ship_types[shty.name]=shty

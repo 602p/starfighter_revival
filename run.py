@@ -2,24 +2,26 @@ import pygame
 import ship
 import game
 import world
+import sys
+import ai
 worldsize=(600,400)
 
 pygame.init()
 screen = pygame.display.set_mode(worldsize)
+game.load_ship_types()
 
-ship_image = pygame.image.load("test.png").convert_alpha()
-shty = ship.ShipType(game.load_json("test.ship"))
-player = ship.Ship(shty)
+player = ship.Ship(game.ship_types[sys.argv[1] if len(sys.argv)>1 else "test"], ai.AI())
 
 bg=world.StarfieldScroller(
-			worldsize,
-			[
-				world.StarfieldLayer(20, (255,150,150), 2, -1.25),
-				world.StarfieldLayer(30, (150,255,150), 2, -1.5),
-				world.StarfieldLayer(40, (200,200,200), 3, -1),
-				world.StarfieldLayer(40, (100,100,100), 2, -0.6)
-			]
-		)
+	worldsize,
+	[
+		world.StarfieldLayer(20, (255,150,150), 2, -1.25),
+		world.StarfieldLayer(30, (150,255,150), 2, -1.5),
+		world.StarfieldLayer(40, (200,200,200), 3, -1),
+		world.StarfieldLayer(40, (100,100,100), 2, -0.6)
+	]
+)
+
 world=world.ScrollingWorld(screen)
 
 client=game.GameClient(('10.0.0.100', 1245))
@@ -35,6 +37,13 @@ while run:
 	for e in pygame.event.get():
 		if e.type==pygame.QUIT:
 			run=False
+			
+		elif e.type==pygame.KEYDOWN:
+			if e.key==pygame.K_SPACE:
+				laser=ship.Ship(game.ship_types["laser_projectile"], ai.GoForwardsAI())
+				laser.position=list(player.rect.center)
+				laser.angle=player.angle
+				client.add_owned(laser)
 
 	if keys[pygame.K_q]:
 		run=False
