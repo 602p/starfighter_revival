@@ -16,6 +16,10 @@ class ShipType(object):
 		self.image=game.get_image(data["image"])
 		self.image=pygame.transform.scale(self.image, [int(i*data.get("image_scale", 1)) for i in self.image.get_size()])
 
+#class Floof():
+	#def __init__(self, position, creation_time):
+		#self.position = 
+
 class Ship(entity.Entity):
 	def __init__(self, ship_type):
 		entity.Entity.__init__(self)
@@ -35,8 +39,8 @@ class Ship(entity.Entity):
 		self.make_rotated_image()
 
 	def make_rotated_image(self):
-		if self.angle!=self.last_angle:
-			self.image,self.rect=rot_center(self.base_image, pygame.Rect(self.position, self.base_image.get_size()), self.angle)
+		if self.angle != self.last_angle:
+			self.image,self.rect = rot_center(self.base_image, pygame.Rect(self.position, self.base_image.get_size()), self.angle)
 
 	def turn_left(self):
 		self.turn_direction=1
