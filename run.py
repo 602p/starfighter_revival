@@ -2,7 +2,7 @@ import pygame
 import ship
 import game
 import world
-worldsize=(1600,1000)
+worldsize=(600,400)
 
 pygame.init()
 screen = pygame.display.set_mode(worldsize)
@@ -22,9 +22,8 @@ bg=world.StarfieldScroller(
 		)
 world=world.ScrollingWorld(screen)
 
-client=game.GameClient()
+client=game.GameClient(('localhost', 1245))
 client.add_owned(player)
-client.add_owned(ship.Ship(shty))
 
 clock=pygame.time.Clock()
 run=True
@@ -40,6 +39,7 @@ while run:
 	if keys[pygame.K_q]:
 		run=False
 
+	player.reset_controls()
 	if keys[pygame.K_a]:
 		player.turn_left()
 	elif keys[pygame.K_d]:
@@ -61,3 +61,4 @@ while run:
 
 	bg.move_to(*player.position)
 	pygame.display.flip()
+	client.send_updates()

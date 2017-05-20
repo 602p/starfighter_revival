@@ -78,6 +78,7 @@ class Ship(entity.Entity):
 		self.position[0]+=-self.speed*math.sin(math.radians(self.angle))*dt
 		self.position[1]+=-self.speed*math.cos(math.radians(self.angle))*dt
 
+	def reset_controls(self):
 		self.turn_direction=0
 		self.accel_direction=0
 
@@ -90,7 +91,10 @@ class Ship(entity.Entity):
 			"speed":self.speed,
 			"position":self.position,
 			"rotation_speed":self.rotation_speed,
-			"eid":self.eid
+			"eid":self.eid,
+			"type":self.type.name,
+			"acc_dir":self.accel_direction,
+			"tur_dir":self.turn_direction
 		}
 
 	def load_data(self, data):
@@ -98,3 +102,6 @@ class Ship(entity.Entity):
 		self.speed=data["speed"]
 		self.position=data["position"]
 		self.rotation_speed=data["rotation_speed"]
+		self.eid=data["eid"]
+		self.accel_direction=data["acc_dir"]
+		self.tur_dir=data["tur_dir"]
