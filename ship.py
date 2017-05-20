@@ -85,7 +85,13 @@ class Ship(entity.Entity):
 		screen.blit(self.image, self.rect)
 
 	def save_data(self):
-		return {"angle":self.angle, "speed":self.speed, "position":self.position, "rotation_speed":self.rotation_speed}
+		return {
+			"angle":self.angle,
+			"speed":self.speed,
+			"position":self.position,
+			"rotation_speed":self.rotation_speed,
+			"eid":self.eid
+		}
 
 	def load_data(self, data):
 		self.angle=data["angle"]
