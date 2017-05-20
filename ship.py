@@ -57,7 +57,6 @@ class Ship(entity.Entity):
 
 	def accelerate(self):
 		self.accel_direction=1
-		self.floofs.append(Floof(list(self.position),pygame.time.get_ticks()))
 
 	def decelerate(self):
 		self.accel_direction=-1
@@ -79,6 +78,7 @@ class Ship(entity.Entity):
 				self.rotation_speed=0
 
 		if self.accel_direction:
+			self.floofs.append(Floof(list(self.position),pygame.time.get_ticks()))
 			self.speed+=self.accel_direction*dt*(0.5 if (self.accel_direction==-1 and self.speed>0) else 1)*self.type.accel
 		else:
 			if abs(self.speed)>=game.options["drag_rate"]*dt:
