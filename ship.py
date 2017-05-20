@@ -16,9 +16,12 @@ class ShipType(object):
 		self.image=game.get_image(data["image"])
 		self.image=pygame.transform.scale(self.image, [int(i*data.get("image_scale", 1)) for i in self.image.get_size()])
 
-#class Floof():
-	#def __init__(self, position, creation_time):
-		#self.position = 
+class Floof():
+	def __init__(self, pos, ct):
+		self.position = pos
+		self.creation_time = ct
+		self.image = pygame.image.load("floof.png").convert()
+		self.image.set_colorkey([255,255,255])
 
 class Ship(entity.Entity):
 	def __init__(self, ship_type):
@@ -36,6 +39,8 @@ class Ship(entity.Entity):
 		self.rotation_speed=0
 		self.speed=0
 
+		self.floofs = []
+
 		self.make_rotated_image()
 
 	def make_rotated_image(self):
@@ -50,11 +55,17 @@ class Ship(entity.Entity):
 
 	def accelerate(self):
 		self.accel_direction=1
+		self.floofs.append(Floof(list(self.position),pygame.time.get_ticks()))
 
 	def decelerate(self):
 		self.accel_direction=-1
 
 	def update(self, screen, dt):
+		for floof in self.floofs:
+			u = (pygame.time.get_ticks()-floof.creation_time) > 1000
+			if u:
+				self.floofs.remove(floof)
+
 		if self.turn_direction:
 			self.rotation_speed+=self.turn_direction*self.type.rot_accel*dt
 		else:
@@ -64,7 +75,7 @@ class Ship(entity.Entity):
 				self.rotation_speed=0
 
 		if self.accel_direction:
-			self.speed+=self.accel_direction*dt*(2 if (self.accel_direction==-1 and self.speed>0) else 0.25)*self.type.accel
+			self.speed+=self.accel_direction*dt*(0.5 if (self.accel_direction==-1 and self.speed>0) else 1)*self.type.accel
 		else:
 			if abs(self.speed)>=game.options["drag_rate"]*dt:
 				self.speed-=(1 if self.speed>0 else -1)*game.options["drag_rate"]*dt
@@ -88,6 +99,8 @@ class Ship(entity.Entity):
 
 	def render(self, screen, dt):
 		screen.blit(self.image, self.rect)
+		for floof in self.floofs:
+			screen.blit(floof.image, floof.position)
 
 	def save_data(self):
 		return {

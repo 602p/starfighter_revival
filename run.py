@@ -22,7 +22,7 @@ bg=world.StarfieldScroller(
 		)
 world=world.ScrollingWorld(screen)
 
-client=game.GameClient(('localhost', 1245))
+client=game.GameClient(('10.0.0.100', 1245))
 client.add_owned(player)
 
 clock=pygame.time.Clock()
@@ -35,7 +35,7 @@ while run:
 	for e in pygame.event.get():
 		if e.type==pygame.QUIT:
 			run=False
-	
+
 	if keys[pygame.K_q]:
 		run=False
 
@@ -44,19 +44,19 @@ while run:
 		player.turn_left()
 	elif keys[pygame.K_d]:
 		player.turn_right()
-	
+
 	if keys[pygame.K_w]:
 		player.accelerate()
 	elif keys[pygame.K_s]:
 		player.decelerate()
 
 	client.update(world, dt)
-	
+
 	world.offset=[player.rect.centerx-(worldsize[0]/2), player.rect.centery-(worldsize[1]/2)]
 
 	screen.fill((0,0,0))
 	bg.render(screen)
-	
+
 	client.render(world, dt)
 
 	bg.move_to(*player.position)
