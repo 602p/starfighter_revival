@@ -1,8 +1,9 @@
-import pygame, json, socket, threading, random, os, ai
+import pygame, json, socket, threading, random, os, ai, item
 
 client=None
 
 def get_image(path):
+	if path is None: return pygame.Surface((0,0))
 	return pygame.image.load(path).convert_alpha()
 
 def load_json(path):
@@ -110,11 +111,24 @@ class GameClient:
 		for e in list(self.reliable_message_buffer.values()):
 			self.sendj(e[0])
 
+	def get_ship(self, eid):
+		return self.owned_entities[eid] if eid in self.owned_entities else self.remote_entities[eid]
+
+	def owns_ship(self, ship):
+		return ship in self.owned_entities.values()
+
 import ship
 
 ship_types={}
 def load_ship_types():
-	for filename in os.listdir("assets"):
+	for filename in os.listdir("assets/ships"):
 		if filename.endswith(".ship"):
-			shty=ship.ShipType(load_json("assets/"+filename))
+			shty=ship.ShipType(load_json("assets/ships/"+filename))
 			ship_types[shty.name]=shty
+
+item_types={}
+def load_item_types():
+	for filename in os.listdir("assets/items"):
+		if filename.endswith(".item"):
+			shty=item.ItemType(load_json("assets/items/"+filename))
+			item_types[shty.name]=shty

@@ -1,0 +1,7 @@
+{
+	"name":"laser",
+	"fire_action":"spawn_projectile",
+	"proj_type":"laser_projectile",
+	"cooldown":500,
+	"image":"assets/items/tinygun.png"
+}

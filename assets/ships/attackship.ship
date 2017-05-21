@@ -1,0 +1,16 @@
+{
+	"name":"med_fighter",
+	"max_rot_speed":30,
+	"rot_accel":50,
+	"max_speed":200,
+	"accel":50,
+	"image":"assets/medium_Fighter.png",
+	"map_icon":"assets/radar/med_fighter.png",
+	"image_scale":0.25,
+	"max_shields":50,
+	"max_health":100,
+	"slots":{
+		"left_wing":{"pos":[20,33]},
+		"right_wing":{"pos":[54,33]}
+	}
+}

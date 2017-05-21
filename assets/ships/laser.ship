@@ -9,6 +9,9 @@
 	"trails":false,
 	"lifetime":2500,
 	"damage":10,
+	"is_projectile":"true",
 	"max_shields":999999999999999,
-	"max_health":999999999999999
+	"max_health":999999999999999,
+	"do_normal_map_icon":false,
+	"map_icon":null
 }

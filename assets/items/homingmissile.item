@@ -1,0 +1,7 @@
+{
+	"name":"homing_missile",
+	"fire_action":"spawn_projectile",
+	"proj_type":"missile_projectile",
+	"cooldown":1500,
+	"image":"assets/items/tinygun.png"
+}

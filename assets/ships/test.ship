@@ -5,6 +5,7 @@
 	"max_speed":200,
 	"accel":50,
 	"image":"assets/test.png",
+	"map_icon":"assets/radar/capital_ship.png",
 	"image_scale":0.5,
 	"max_shields":0,
 	"max_health":20

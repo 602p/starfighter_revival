@@ -5,15 +5,22 @@ import world
 import sys
 import ai
 import ui
+import item
 worldsize=(1000,600)
 
 pygame.init()
 screen = pygame.display.set_mode(worldsize)
 game.load_ship_types()
+game.load_item_types()
 
 team2=len(sys.argv)>1
 
-player = ship.Ship(game.ship_types["attackship" if team2 else "test"], ai.AI(), 1 if team2 else 0)
+player = ship.Ship(game.ship_types["med_fighter"], ai.AI(), 1 if team2 else 0)
+player.target=None
+print(player.type.slots)
+player.set_equipment("left_wing", item.Item(game.item_types["laser"]))
+player.set_equipment("right_wing", item.Item(game.item_types["laser"]))
+player.selected_weapon="left_wing"
 
 bg=world.StarfieldScroller(
 	worldsize,
@@ -45,17 +52,18 @@ while run:
 			run=False
 			
 		elif e.type==pygame.KEYDOWN:
-			if e.key==pygame.K_SPACE:
-				laser=ship.Ship(game.ship_types["laser_projectile"], ai.GoForwardsAI(), faction=player.faction)
-				laser.position=list(player.rect.center)
-				laser.angle=player.angle
-				laser.make_rotated_image()
-				client.add_owned(laser)
-			elif e.key==pygame.K_p:
-				client.add_owned(ship.Ship(game.ship_types["test"], ai.AI(), faction=1))
+			if e.key==pygame.K_p:
+				player.target=ship.Ship(game.ship_types["med_fighter"], ai.HostileAI(), faction=1)
+				player.target.set_equipment("left_wing", item.Item(game.item_types["homing_missile"]))
+				player.target.selected_weapon="left_wing"
+				player.target.target=player
+				client.add_owned(player.target)
 
 	if keys[pygame.K_q]:
 		run=False
+
+	if keys[pygame.K_SPACE]:
+		player.fire_selected()
 
 	player.reset_controls()
 	if keys[pygame.K_a]:

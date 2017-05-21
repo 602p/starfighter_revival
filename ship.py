@@ -1,4 +1,4 @@
-import pygame, math, game, entity, random
+import pygame, math, game, entity, random, item
 
 def rot_center(image, rect, angle):
 	"""rotate an image while keeping its center"""
@@ -28,6 +28,11 @@ class ShipType(object):
 		self.raw=data
 		self.image=pygame.transform.scale(self.image, [int(i*data.get("image_scale", 1)) for i in self.image.get_size()])
 		self.trail = data.get("trails", True)
+		print(data.get("map_icon", "assets/radar/default.png"))
+		self.map_icon=game.get_image(data.get("map_icon", "assets/radar/default.png")).convert_alpha()
+		self.do_normal_map_icon=data.get("do_normal_map_icon", True)
+		self.slots=data.get("slots",{"none":[0,0]})
+		# print(data, self.slots)
 
 class Floof():
 	def __init__(self, pos, ct):
@@ -50,7 +55,9 @@ class Ship(entity.Entity):
 		self.ai=ai
 		self.ai.ship=self
 		self.marked_for_death=False
+		self.selected_weapon=list(self.type.slots.keys())[0]
 
+		self.target=None
 		self.angle=0
 		self.position=[200,200]
 		self.rotation_speed=0
@@ -58,6 +65,7 @@ class Ship(entity.Entity):
 		self.faction=faction
 		self.health=self.type.max_health
 		self.shields=self.type.max_shields
+		self.equipment={k:None for k in self.type.slots.keys()}
 
 		self.floofs = []
 
@@ -65,7 +73,14 @@ class Ship(entity.Entity):
 
 	def make_rotated_image(self):
 		if self.angle != self.last_angle:
-			self.image,self.rect = rot_center(self.base_image, pygame.Rect(self.position, self.base_image.get_size()), self.angle)
+			self.do_make_rot()
+
+	def do_make_rot(self):
+		img=self.base_image.copy()
+		for key, item in self.equipment.items():
+			if item:
+				img.blit(item.type.image, self.type.slots[key]["pos"])
+		self.image,self.rect = rot_center(img, pygame.Rect(self.position, self.base_image.get_size()), self.angle)
 
 	def turn_left(self):
 		self.turn_direction=1
@@ -80,7 +95,6 @@ class Ship(entity.Entity):
 		self.accel_direction=-1
 
 	def update(self, screen, dt):
-
 		for floof in self.floofs:
 			u = (pygame.time.get_ticks()-floof.creation_time) > floof.lifetime
 			if u:
@@ -102,7 +116,7 @@ class Ship(entity.Entity):
 				pygame.time.get_ticks()))
 				 for _ in range(int(self.speed/10))]
 		if self.accel_direction:
-			self.speed+=self.accel_direction*dt*(0.5 if (self.accel_direction==-1 and self.speed>0) else 1)*self.type.accel
+			self.speed+=self.accel_direction*dt*(2 if (self.accel_direction==-1 and self.speed>0) else 1)*self.type.accel
 		else:
 			if abs(self.speed)>=game.options["drag_rate"]*dt:
 				self.speed-=(1 if self.speed>0 else -1)*game.options["drag_rate"]*dt
@@ -152,7 +166,9 @@ class Ship(entity.Entity):
 			"faction":self.faction,
 			"health":self.health,
 			"shields":self.shields,
-			"ai":type(self.ai).name
+			"target":self.target.eid if self.target else None,
+			"ai":type(self.ai).name,
+			"equipment":{k:i.save_data() if i else None for k,i in self.equipment.items()}
 		}
 
 	def load_data(self, data):
@@ -162,10 +178,26 @@ class Ship(entity.Entity):
 		self.rotation_speed=data["rotation_speed"]
 		self.eid=data["eid"]
 		self.accel_direction=data["acc_dir"]
-		self.tur_dir=data["tur_dir"]
+		self.turn_direction=data["tur_dir"]
 		self.faction=data["faction"]
 		self.health=data["health"]
 		self.shields=data["shields"]
+
+		for key, value in data["equipment"]:
+			if value is not None:
+				if key not in self.equipment or value["type"]!=self.equipment[key].type.name:
+					self.equipment[key]=game.item_types[value["type"]]
+					self.equipment[key].ship=self
+					self.do_make_rot()
+				self.equipment[key].load_data(value)
+			else:
+				self.equipment[key]=None
+
+		try:
+			self.target=game.client.get_ship(data["target"])
+		except KeyError:
+			self.target=None
+
 		self.make_rotated_image()
 
 	def take_damage(self, amt):
@@ -175,3 +207,13 @@ class Ship(entity.Entity):
 			self.shields=0
 			if self.health<=0:
 				self.marked_for_death=True
+
+	def fire_selected(self):
+		if self.equipment[self.selected_weapon]:
+			self.equipment[self.selected_weapon].fire()
+
+	def set_equipment(self, slot, item):
+		if self.type.raw.get("is_projectile"):return
+		self.equipment[slot]=item
+		item.ship=self
+		self.do_make_rot()
