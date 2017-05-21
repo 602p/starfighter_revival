@@ -144,9 +144,9 @@ class Ship(entity.Entity):
 			else:
 				self.speed=0
 
-	def reset_controls(self):
-		self.turn_direction=0
-		self.accel_direction=0
+	# def reset_controls(self):
+	# 	self.turn_direction=0
+	# 	self.accel_direction=0
 
 	def render(self, screen, dt):
 		for floof in self.floofs:
