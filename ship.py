@@ -15,6 +15,7 @@ class ShipType(object):
 			setattr(self, key, data[key])
 		self.image=game.get_image(data["image"])
 		self.image=pygame.transform.scale(self.image, [int(i*data.get("image_scale", 1)) for i in self.image.get_size()])
+		self.trail = data.get("trails", True)
 
 class Floof():
 	def __init__(self, pos, ct):
@@ -77,15 +78,6 @@ class Ship(entity.Entity):
 			else:
 				self.rotation_speed=0
 
-		if self.accel_direction:
-			self.floofs.append(Floof(list(self.position),pygame.time.get_ticks()))
-			self.speed+=self.accel_direction*dt*(0.5 if (self.accel_direction==-1 and self.speed>0) else 1)*self.type.accel
-		else:
-			if abs(self.speed)>=game.options["drag_rate"]*dt:
-				self.speed-=(1 if self.speed>0 else -1)*game.options["drag_rate"]*dt
-			else:
-				self.speed=0
-
 		self.rotation_speed=clamp(self.rotation_speed, self.type.max_rot_speed, -self.type.max_rot_speed)
 		self.speed=clamp(self.speed, self.type.max_speed, -self.type.max_speed*.5)
 		self.angle+=self.rotation_speed*dt
@@ -97,14 +89,24 @@ class Ship(entity.Entity):
 		self.position[0]+=-self.speed*math.sin(math.radians(self.angle))*dt
 		self.position[1]+=-self.speed*math.cos(math.radians(self.angle))*dt
 
+		if self.accel_direction:
+			if self.type.trail:
+				self.floofs.append(Floof(list(self.rect.center),pygame.time.get_ticks()))
+			self.speed+=self.accel_direction*dt*(0.5 if (self.accel_direction==-1 and self.speed>0) else 1)*self.type.accel
+		else:
+			if abs(self.speed)>=game.options["drag_rate"]*dt:
+				self.speed-=(1 if self.speed>0 else -1)*game.options["drag_rate"]*dt
+			else:
+				self.speed=0
+
 	def reset_controls(self):
 		self.turn_direction=0
 		self.accel_direction=0
 
 	def render(self, screen, dt):
-		screen.blit(self.image, self.rect)
 		for floof in self.floofs:
 			screen.blit(floof.image, floof.position)
+		screen.blit(self.image, self.rect)
 
 	def save_data(self):
 		return {
