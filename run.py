@@ -6,7 +6,7 @@ import sys
 import ai
 import ui
 import item
-worldsize=(1600,1000)
+worldsize=(800,600)
 
 pygame.init()
 screen = pygame.display.set_mode(worldsize)
