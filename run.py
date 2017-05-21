@@ -4,13 +4,15 @@ import game
 import world
 import sys
 import ai
-worldsize=(600,400)
+worldsize=(1000,600)
 
 pygame.init()
 screen = pygame.display.set_mode(worldsize)
 game.load_ship_types()
 
-player = ship.Ship(game.ship_types[sys.argv[1] if len(sys.argv)>1 else "test"], ai.AI())
+team2=len(sys.argv)>1
+
+player = ship.Ship(game.ship_types["attackship" if team2 else "test"], ai.AI(), 1 if team2 else 0)
 
 bg=world.StarfieldScroller(
 	worldsize,
@@ -26,6 +28,7 @@ world=world.ScrollingWorld(screen)
 
 client=game.GameClient(('10.0.0.100', 1245))
 client.add_owned(player)
+game.client=client
 
 clock=pygame.time.Clock()
 run=True
@@ -40,10 +43,13 @@ while run:
 			
 		elif e.type==pygame.KEYDOWN:
 			if e.key==pygame.K_SPACE:
-				laser=ship.Ship(game.ship_types["laser_projectile"], ai.GoForwardsAI())
+				laser=ship.Ship(game.ship_types["laser_projectile"], ai.GoForwardsAI(), faction=player.faction)
 				laser.position=list(player.rect.center)
 				laser.angle=player.angle
+				laser.make_rotated_image()
 				client.add_owned(laser)
+			elif e.key==pygame.K_p:
+				client.add_owned(ship.Ship(game.ship_types["test"], ai.AI(), faction=1))
 
 	if keys[pygame.K_q]:
 		run=False
@@ -71,3 +77,7 @@ while run:
 	bg.move_to(*player.position)
 	pygame.display.flip()
 	client.send_updates()
+	if player.marked_for_death:
+		print("\n"*100)
+		print("YOU ARE DEAD")
+		run=False

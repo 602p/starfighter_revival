@@ -2,9 +2,13 @@
 	"name":"laser_projectile",
 	"max_rot_speed":0,
 	"rot_accel":0,
-	"max_speed":500,
-	"accel":1000,
+	"max_speed":200,
+	"accel":100,
 	"image":"assets/laser.png",
 	"image_scale":1,
-	"trails":false
+	"trails":false,
+	"lifetime":2500,
+	"damage":10,
+	"max_shields":999999999999999,
+	"max_health":999999999999999
 }
