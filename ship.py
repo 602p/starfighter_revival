@@ -183,13 +183,14 @@ class Ship(entity.Entity):
 		self.health=data["health"]
 		self.shields=data["shields"]
 
-		for key, value in data["equipment"]:
+		for key, value in data["equipment"].items():
 			if value is not None:
-				if key not in self.equipment or value["type"]!=self.equipment[key].type.name:
+				if key not in self.equipment or (value["type"]!=self.equipment[key].type.name if self.equipment[key] else False):
 					self.equipment[key]=game.item_types[value["type"]]
 					self.equipment[key].ship=self
 					self.do_make_rot()
-				self.equipment[key].load_data(value)
+				if self.equipment[key]:
+					self.equipment[key].load_data(value)
 			else:
 				self.equipment[key]=None
 
