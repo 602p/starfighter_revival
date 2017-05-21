@@ -73,16 +73,20 @@ while run:
 	if keys[pygame.K_SPACE]:
 		player.fire_selected()
 
-	player.reset_controls()
+	
 	if keys[pygame.K_a]:
 		player.turn_left()
 	elif keys[pygame.K_d]:
 		player.turn_right()
+	else:
+		player.turn_direction=0
 
 	if keys[pygame.K_w]:
 		player.accelerate()
 	elif keys[pygame.K_s]:
 		player.decelerate()
+	else:
+		player.accel_direction=0
 
 	client.update(world, dt)
 
