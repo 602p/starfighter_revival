@@ -1,0 +1,15 @@
+{
+	"name":"lg_shuttle",
+	"max_rot_speed":35,
+	"rot_accel":30,
+	"max_speed":100,
+	"accel":30,
+	"image":"assets/ships/large_shuttle.png",
+	"map_icon":"assets/radar/capital_ship.png",
+	"image_scale":0.5,
+	"max_shields":99999999,
+	"max_health":100,
+	"slots":{
+		"main":{"pos":[97,106]}
+	}
+}

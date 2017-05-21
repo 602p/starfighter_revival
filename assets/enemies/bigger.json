@@ -1,0 +1,7 @@
+{
+	"ship":"med_fighter",
+	"ai":"hostile_ai",
+	"equipment":{
+		"left_wing":"homing_missile"
+	}
+}

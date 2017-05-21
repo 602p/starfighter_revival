@@ -1,0 +1,18 @@
+{
+	"name":"lg_missile_projectile",
+	"max_rot_speed":35,
+	"rot_accel":30,
+	"max_speed":120,
+	"accel":60,
+	"image":"assets/missle_homing.png",
+	"image_scale":0.75,
+	"trails":true,
+	"lifetime":8000,
+	"damage":80,
+	"is_projectile":true,
+	"max_shields":999999999999999,
+	"max_health":999999999999999,
+	"do_normal_map_icon":false,
+	"map_icon":"assets/radar/missile.png",
+	"render_only_for_enemy":true
+}

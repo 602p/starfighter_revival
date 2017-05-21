@@ -1,0 +1,7 @@
+{
+	"name":"large_missile",
+	"fire_action":"spawn_projectile",
+	"proj_type":"lg_missile_projectile",
+	"cooldown":4000,
+	"image":"assets/items/tinygun.png"
+}

@@ -6,7 +6,7 @@ import sys
 import ai
 import ui
 import item
-worldsize=(1000,600)
+worldsize=(1600,1000)
 
 pygame.init()
 screen = pygame.display.set_mode(worldsize)
@@ -16,14 +16,19 @@ game.load_item_types()
 
 sysfont=pygame.font.SysFont("monospace", 16, True, False)
 
-team2=len(sys.argv)>1
-
-player = ship.Ship(game.ship_types["med_fighter"], ai.AI(), 1 if team2 else 0)
-player.target=None
-print(player.type.slots)
-player.set_equipment("left_wing", item.Item(game.item_types["laser"]))
-player.set_equipment("right_wing", item.Item(game.item_types["homing_missile"]))
-player.selected_weapon="left_wing"
+if len(sys.argv)>1:
+	player = ship.Ship(game.ship_types["med_fighter"], ai.AI(), 0)
+	player.target=None
+	print(player.type.slots)
+	player.set_equipment("left_wing", item.Item(game.item_types["laser"]))
+	player.set_equipment("right_wing", item.Item(game.item_types["homing_missile"]))
+	player.selected_weapon="left_wing"
+else:
+	player = ship.Ship(game.ship_types["lg_shuttle"], ai.AI(), 0)
+	player.target=None
+	print(player.type.slots)
+	player.set_equipment("main", item.Item(game.item_types["large_missile"]))
+	player.selected_weapon="main"
 
 bg=world.StarfieldScroller(
 	worldsize,
@@ -57,6 +62,8 @@ while run:
 		elif e.type==pygame.KEYDOWN:
 			if e.key==pygame.K_p:
 				client.add_owned(game.make_enemy(game.load_json("assets/enemies/sprinter.json")))
+			elif e.key==pygame.K_o:
+				client.add_owned(game.make_enemy(game.load_json("assets/enemies/bigger.json")))
 			elif e.key==pygame.K_z:
 				player.selected_weapon=[w for w in player.equipment.keys() if w!=player.selected_weapon][0]
 
