@@ -2,7 +2,7 @@
 	"name":"med_fighter",
 	"max_rot_speed":30,
 	"rot_accel":50,
-	"max_speed":200,
+	"max_speed":120,
 	"accel":50,
 	"image":"assets/medium_Fighter.png",
 	"map_icon":"assets/radar/med_fighter.png",

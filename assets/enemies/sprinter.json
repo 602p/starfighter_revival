@@ -1,0 +1,7 @@
+{
+	"ship":"shuttle",
+	"ai":"hostile_ai",
+	"equipment":{
+		"main":"laser"
+	}
+}

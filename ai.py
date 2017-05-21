@@ -58,14 +58,32 @@ class HostileAI(AI):
 			if self.ship.type.max_rot_speed>0 and not self.ship.target.marked_for_death:
 				angle=get_rel_angle(get_angle(self.ship.rect.centerx, self.ship.target.rect.centerx,
 					self.ship.rect.centery, self.ship.target.rect.centery), self.ship.angle)
-				if abs(angle)>20:
+				if abs(angle)>5:
 					self.ship.accel_direction=0
 					if angle>0:
 						self.ship.turn_direction=1
 					else:
 						self.ship.turn_direction=-1
 				else:
+					self.ship.turn_direction=0
 					self.ship.accel_direction=1
 					self.ship.fire_selected()
+
+		min_dist=-1
+		min_ship=self.ship.target
+		for e in game.client.owned_entities.values():
+			if e.faction!=self.ship.faction:
+				dist=math.sqrt((self.ship.rect.centerx-e.rect.centerx)**2+(self.ship.rect.centery-e.rect.centery)**2)
+				if dist<min_dist or min_dist==-1:
+					min_dist=dist
+					min_ship=e
+		for e in game.client.remote_entities.values():
+			if e.faction!=self.ship.faction:
+				dist=math.sqrt((self.ship.rect.centerx-e.rect.centerx)**2+(self.ship.rect.centery-e.rect.centery)**2)
+				if dist<min_dist or min_dist==-1:
+					min_dist=dist
+					min_ship=e
+		self.ship.target=min_ship
+		print(self.ship.target)
 
 import game

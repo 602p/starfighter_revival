@@ -1,0 +1,15 @@
+{
+	"name":"shuttle",
+	"max_rot_speed":45,
+	"rot_accel":50,
+	"max_speed":200,
+	"accel":50,
+	"image":"assets/light_shuttle.png",
+	"map_icon":"assets/radar/med_fighter.png",
+	"image_scale":0.5,
+	"max_shields":20,
+	"max_health":30,
+	"slots":{
+		"main":{"pos":[50,55]}
+	}
+}

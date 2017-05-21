@@ -10,8 +10,11 @@ worldsize=(1000,600)
 
 pygame.init()
 screen = pygame.display.set_mode(worldsize)
+pygame.display.set_caption("Starfighter: Revival")
 game.load_ship_types()
 game.load_item_types()
+
+sysfont=pygame.font.SysFont("monospace", 16, True, False)
 
 team2=len(sys.argv)>1
 
@@ -19,7 +22,7 @@ player = ship.Ship(game.ship_types["med_fighter"], ai.AI(), 1 if team2 else 0)
 player.target=None
 print(player.type.slots)
 player.set_equipment("left_wing", item.Item(game.item_types["laser"]))
-player.set_equipment("right_wing", item.Item(game.item_types["laser"]))
+player.set_equipment("right_wing", item.Item(game.item_types["homing_missile"]))
 player.selected_weapon="left_wing"
 
 bg=world.StarfieldScroller(
@@ -53,11 +56,9 @@ while run:
 			
 		elif e.type==pygame.KEYDOWN:
 			if e.key==pygame.K_p:
-				player.target=ship.Ship(game.ship_types["med_fighter"], ai.HostileAI(), faction=1)
-				player.target.set_equipment("left_wing", item.Item(game.item_types["homing_missile"]))
-				player.target.selected_weapon="left_wing"
-				player.target.target=player
-				client.add_owned(player.target)
+				client.add_owned(game.make_enemy(game.load_json("assets/enemies/sprinter.json")))
+			elif e.key==pygame.K_z:
+				player.selected_weapon=[w for w in player.equipment.keys() if w!=player.selected_weapon][0]
 
 	if keys[pygame.K_q]:
 		run=False
@@ -86,6 +87,21 @@ while run:
 	client.render(world, dt)
 
 	radar.render(dt)
+
+	for idx, (key, value) in enumerate(player.equipment.items()):
+		screen.blit(
+			sysfont.render(key+": "+value.type.name if value else "<empty>", True, 
+				(0,255,0) if key==player.selected_weapon else (255,255,255)),
+			(0, idx*15))
+
+	idx=0
+	for e in (list(client.owned_entities.values())+list(client.remote_entities.values())):
+		if not e.type.raw.get("is_projectile"):
+			idx+=1
+			screen.blit(
+				sysfont.render(e.type.name, True, 
+					(255,0,0) if e.faction!=0 else (255,255,255)),
+				(radar.rect.left, radar.rect.bottom+(idx*15)))
 
 	bg.move_to(*player.position)
 	pygame.display.flip()

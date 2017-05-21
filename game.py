@@ -117,7 +117,7 @@ class GameClient:
 	def owns_ship(self, ship):
 		return ship in self.owned_entities.values()
 
-import ship
+import ship, item
 
 ship_types={}
 def load_ship_types():
@@ -132,3 +132,10 @@ def load_item_types():
 		if filename.endswith(".item"):
 			shty=item.ItemType(load_json("assets/items/"+filename))
 			item_types[shty.name]=shty
+
+def make_enemy(data):
+	e=ship.Ship(ship_types[data["ship"]], ai.ais[data["ai"]](), faction=1)
+	for k,v in data["equipment"].items():
+		e.set_equipment(k, item.Item(item_types[v]))
+		e.selected_weapon=k
+	return e
