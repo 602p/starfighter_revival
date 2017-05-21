@@ -59,3 +59,6 @@ class ScrollingWorld:
 
 	def draw_rect(self, rect, color, size):
 		pygame.draw.rect(self.screen, color, rect.move(*self.offset), size)
+
+	def draw_circle(self, color, pos, radius, width=0):
+		pygame.draw.circle(self.screen, color, [pos[0]-self.offset[0], pos[1]-self.offset[1]], radius, width)

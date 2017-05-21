@@ -4,7 +4,7 @@
 	"rot_accel":50,
 	"max_speed":200,
 	"accel":50,
-	"image":"assets/attackship_s.png",
+	"image":"assets/medium_Fighter.png",
 	"image_scale":1,
 	"max_shields":0,
 	"max_health":20

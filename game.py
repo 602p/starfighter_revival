@@ -82,11 +82,14 @@ class GameClient:
 			else:
 				self.remote_entities[data["eid"]].load_data(data)
 		elif data["msg"]=="reliable_ack":
-			print("Client "+str(self.cid)+" got ack of reliable message "+str(data["mid"])+" by client "+str(data["cid"]))
-			self.reliable_message_buffer[data["mid"]][1][data["cid"]]=True
-			if all(self.reliable_message_buffer[data["mid"]][1]):
-				print("reliable message "+str(data["mid"])+" fully delivered")
-				del self.reliable_message_buffer[data["mid"]]
+			try:
+				print("Client "+str(self.cid)+" got ack of reliable message "+str(data["mid"])+" by client "+str(data["cid"]))
+				self.reliable_message_buffer[data["mid"]][1][data["cid"]]=True
+				if all(self.reliable_message_buffer[data["mid"]][1]):
+					print("reliable message "+str(data["mid"])+" fully delivered")
+					del self.reliable_message_buffer[data["mid"]]
+			except KeyError as e:
+				print("Error is ack:"+str(e))
 		elif data["msg"]=="del_entity":
 			if data["eid"] in self.owned_entities:
 				del self.owned_entities[data["eid"]]
@@ -104,7 +107,7 @@ class GameClient:
 				data["cid"]=self.cid
 				data["msg"]="entity"
 				self.sendj(data)
-		for e in self.reliable_message_buffer.values():
+		for e in list(self.reliable_message_buffer.values()):
 			self.sendj(e[0])
 
 import ship

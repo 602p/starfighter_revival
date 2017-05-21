@@ -4,6 +4,7 @@ import game
 import world
 import sys
 import ai
+import ui
 worldsize=(1000,600)
 
 pygame.init()
@@ -29,6 +30,8 @@ world=world.ScrollingWorld(screen)
 client=game.GameClient(('10.0.0.100', 1245))
 client.add_owned(player)
 game.client=client
+
+radar=ui.Radar(player, screen)
 
 clock=pygame.time.Clock()
 run=True
@@ -73,6 +76,8 @@ while run:
 	bg.render(screen)
 
 	client.render(world, dt)
+
+	radar.render(dt)
 
 	bg.move_to(*player.position)
 	pygame.display.flip()
