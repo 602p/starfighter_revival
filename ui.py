@@ -60,6 +60,10 @@ class Radar:
 
 		if e.type.do_normal_map_icon:
 			self.screen.blit(image, rect)
+			if rect.collidepoint(pygame.mouse.get_pos()):
+				if pygame.mouse.get_pressed()[0]:
+					if e.faction!=self.player.faction:
+						self.player.target=e
 			# pygame.draw.rect(self.screen, (255,0,0), rect, 2)
 		if e is self.player.target:
 			self.screen.blit(self.target_icon, overlay_pos)
